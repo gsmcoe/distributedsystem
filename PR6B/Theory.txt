@@ -1,0 +1,60 @@
+Aim
+---
+
+To implement the Ring Algorithm for leader election in a distributed system, ensuring that a new coordinator is chosen following the failure of the existing leader\[cite: 11\].
+
+Theory
+------
+
+The Ring Algorithm is a decentralized leader election method used in distributed systems where all processes are organized in a logical circle. Unlike the Bully algorithm, which relies on a hierarchy of "bullying" lower processes, the Ring algorithm relies on a sequential flow of information. Each process in the ring is aware of its neighbors and knows the overall structure of the network. When a process notices that the current coordinator has failed, it initiates an election by creating an "Election Message"\[cite: 11\].
+
+The election process occurs in a circular fashion. The initiator sends the election message to its immediate successor in the ring. If the successor is down, the initiator skips it and sends the message to the next active process. As the message moves around the ring, each active process adds its own unique identifier (ID) to the message or compares its ID to the current maximum found in the message\[cite: 11\]. This continues until the message returns to the original initiator, completing a full circle. By the time the message returns, the initiator can identify which active process has the highest ID\[cite: 11\].
+
+Once the process with the highest ID is identified as the new coordinator, a second message is circulated around the ring. This "Coordinator Message" informs every active node of the identity of the new leader\[cite: 11\]. This ensures that every process in the distributed system is synchronized and knows which node to contact for centralized tasks. The algorithm is efficient in terms of message overhead and ensures that a leader is always elected as long as at least one process remains active in the ring\[cite: 11\].
+
+Pseudocode
+----------
+
+The following pseudocode outlines the circular message-passing logic used to determine the highest active process ID.
+
+Election Phase:
+
+    INPUT initiatorid
+    IF initiator is NOT active:
+        EXIT "Cannot start election"[cite: 11]
+    
+    INITIALIZE maxid = -1
+    INITIALIZE currentnode = initiatorindex
+    
+    // First Pass: Identify the highest ID
+    REPEAT:
+        IF node[currentnode] is active:
+            PRINT "Process passes election message"[cite: 11]
+            IF currentnodeid > maxid:
+                maxid = currentnodeid[cite: 11]
+        END IF
+        currentnode = (currentnode + 1) MOD totalnodes // Move to next in ring[cite: 11]
+    UNTIL currentnode EQUALS initiatorindex[cite: 11]
+    
+
+Announcement Phase:
+
+    PRINT "New Coordinator is Process" + maxid[cite: 11]
+    INITIALIZE currentnode = maxidindex
+    
+    // Second Pass: Inform all nodes
+    REPEAT:
+        IF node[currentnode] is active:
+            PRINT "Coordinator message passed from" + currentnode[cite: 11]
+        END IF
+        currentnode = (currentnode + 1) MOD totalnodes[cite: 11]
+    UNTIL currentnode EQUALS maxidindex[cite: 11]
+    
+
+Explanation of Logic:  
+The code uses a do-while loop combined with the modulo operator (% n) to ensure that the search for the leader stays within the bounds of the ring and eventually returns to the starting point\[cite: 11\]. In the first pass, every active process "votes" by allowing its ID to be compared against the maxId\[cite: 11\]. Once the highest ID is found, the second loop acts as a broadcast, ensuring that every node receives the "Coordinator" update before the election is officially marked as completed\[cite: 11\].
+
+Conclusion
+----------
+
+In conclusion, this practical implemented Ring Algorithm for leader election.By passing messages in a logical circle, the system ensures that every active process participates in the election and stays informed about the final outcome.

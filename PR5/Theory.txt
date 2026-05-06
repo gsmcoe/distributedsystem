@@ -1,0 +1,55 @@
+Aim
+---
+
+To implement a Token Ring based Mutual Exclusion Algorithm in a distributed system to ensure coordinated access to shared resources
+
+Theory
+------
+
+In distributed systems, mutual exclusion is a fundamental requirement to prevent multiple processes from accessing a critical section simultaneously, which could lead to data inconsistency. The Token Ring algorithm is a non-privileged, permission-based approach where all processes are organized in a logical ring. Each process knows its successor, and the last process points back to the first, completing the circle\[cite: 9\]. A unique message called a "token" circulates around the ring\[cite: 9\]. A process can only access the critical section or send data if it currently possesses this token\[cite: 9\].
+
+The process begins with the formation of the ring, where each node is assigned an index\[cite: 9\]. When a node (the sender) wishes to communicate, it must wait for the token to arrive\[cite: 9\]. The token is passed sequentially from one node to the next (e.g., $P0 \\rightarrow P1 \\rightarrow P2$)\[cite: 9\]. Once the sender captures the token, it gains the exclusive right to use the network\[cite: 9\]. It then attaches its data to the frame and specifies a destination receiver\[cite: 9\].
+
+As the data travels around the ring, intermediate nodes receive the data and, recognizing they are not the intended recipient, forward it to their immediate successor\[cite: 9\]. This continues until the data reaches the receiver node\[cite: 9\]. After the communication is complete, the sender releases the token, allowing it to continue its journey around the ring so other nodes may have a turn\[cite: 9\]. This algorithm is inherently starvation-free because the token moves in a fixed direction, ensuring that every node eventually gets a chance to transmit data\[cite: 9\].
+
+Pseudocode
+----------
+
+The following pseudocode represents the logical flow of forming a ring and passing a token to facilitate data transfer between nodes.
+
+Token Ring Logic:
+
+    INPUT totalnodes (n)
+    DISPLAY "Ring Formed" (0 to n-1 and back to 0)[cite: 9]
+    
+    REPEAT:
+        INPUT senderid, receiverid, and datavalue[cite: 9]
+        
+        // Simulate Token Movement to Sender
+        INITIALIZE tokenposition = 0
+        FOR i FROM tokenposition TO senderid:
+            PRINT "Token passing through node " + i[cite: 9]
+        END FOR
+        
+        // Data Transmission Phase
+        PRINT "Sender " + senderid + " is sending data"[cite: 9]
+        INITIALIZE current = senderid
+        WHILE current is NOT EQUAL TO receiverid:
+            nextnode = (current + 1) MOD n
+            PRINT "Data forwarded by " + current + " to " + nextnode[cite: 9]
+            current = nextnode
+        END WHILE
+        
+        PRINT "Receiver " + receiverid + " received data"[cite: 9]
+        
+        INPUT choice (to continue or exit)[cite: 9]
+    UNTIL choice IS 0
+    
+
+Explanation of Logic:  
+The algorithm first creates a logical loop of $N$ nodes\[cite: 9\]. To simulate the "wait" for a token, the program prints the path from the starting point (Node 0) to the sender\[cite: 9\]. Once the sender has the "token," the data begins moving\[cite: 9\]. The (current + 1) % n logic ensures that when the data reaches the last node, it correctly wraps around back to node 0\[cite: 9\]. Each node in between the sender and receiver acts as a relay, moving the data one step at a time until the destination is reached\[cite: 9\].
+
+Conclusion
+----------
+
+The implementation of the Token Ring algorithm demonstrates. By using a circulating token, the system ensures that only one node can initiate data transfer at any given time, effectively preventing network collisions and resource conflicts.

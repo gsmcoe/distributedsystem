@@ -1,0 +1,46 @@
+Aim
+---
+
+To implement the Berkeley Algorithm for internal clock synchronization in a distributed system to ensure all nodes maintain a consistent time.
+
+Theory
+------
+
+In a distributed system, maintaining a single global time is challenging because every machine has its own local physical clock, and these clocks tend to drift apart over time. The Berkeley Algorithm is an internal synchronization method designed to keep all clocks in a network consistent with one another, rather than synchronizing them to an external source like an atomic clock. In this algorithm, one node is designated as the Master (server), and the remaining nodes act as Slaves (clients). Unlike other algorithms where clients periodically ask the server for the time, the Berkeley Master is "active"—it periodically polls every slave to ask for their current local time.
+
+Once the Master receives the time samples from all Slaves, it calculates the difference between its own clock and each slave's clock. Instead of simply sending its own time to the slaves, the Master calculates a "fault-tolerant average" of all the times, including its own. If a particular slave's clock is drifting significantly beyond a certain threshold, the Master might ignore it to prevent skewed results. After determining the average offset, the Master calculates the specific adjustment required for each individual node.
+
+Finally, the Master sends an adjustment value to each Slave. Each node then adds or subtracts this adjustment from its local time to reach the newly calculated synchronized time. This approach ensures that even if the Master’s own clock is slightly inaccurate, the entire system reaches a consensus, maintaining relative consistency across the distributed environment. This makes the Berkeley Algorithm highly effective for systems where internal coordination is more important than absolute real-world time accuracy.
+
+Pseudocode
+----------
+
+The following pseudocode outlines the conceptual steps of the Berkeley synchronization process involving one server and multiple clients.
+
+Master Node Logic:
+
+    INPUT servertime, client1time, client2time
+    
+    COMPUTE offset1 = client1time - servertime
+    COMPUTE offset2 = client2time - servertime
+    COMPUTE offsetserver = 0 // Offset from itself
+    
+    // Calculate the average drift across the system
+    COMPUTE averagedrift = (offset1 + offset2 + offsetserver) / 3
+    
+    // Determine specific adjustments for each node
+    COMPUTE serveradjustment = averagedrift
+    COMPUTE client1adjustment = averagedrift - offset1
+    COMPUTE client2adjustment = averagedrift - offset2
+    
+    // Apply synchronization
+    NEWservertime = servertime + serveradjustment
+    NEWclient1time = client1time + client1adjustment
+    NEWclient2time = client2time + client2adjustment
+    
+    PRINT "All clocks synchronized to: " + NEWservertime
+
+Conclusion
+----------
+
+The implementation of the Berkeley Algorithm illustrates a robust method for achieving clock synchronization. This algorithm is useful for maintaining consistency and coordination in distributed applications where accurate timing is necessary.

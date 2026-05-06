@@ -1,0 +1,13 @@
+Assignment No. 1: Client/Server Process Communication using RMI
+
+Aim: To implement multi-threaded client/server process communication using RMI.
+Remote Method Invocation (RMI) is a Java API that allows an object running in one Java Virtual Machine (JVM) to invoke methods of an object running in another JVM. These JVMs may be on the same machine or on different machines connected through a network. RMI is an important concept in distributed systems because it enables communication between client and server applications using simple method calls.
+
+The communication between client and server in RMI happens using two important components: Stub and Skeleton. The Stub is present on the client side and acts like a proxy for the remote object. When the client calls a method, the stub collects the method name, parameters, and remote object details, and sends them to the server. The Skeleton is present on the server side. It receives the request from the stub, calls the actual method on the server object, and sends the result back to the client.
+
+To implement RMI, the first step is creating a remote interface. This interface defines the methods that can be accessed remotely. It must extend the Remote interface, and each method must throw RemoteException. The second step is implementing the remote interface. The implementation class extends UnicastRemoteObject and provides the actual logic of the methods.
+
+Next, the rmiregistry service is started. It works like a directory where remote objects are registered. The server binds the remote object using a name, and the client uses that name to locate the object.
+Then, the server application is executed. The server creates the remote object and binds it to the registry using the Naming.rebind() method. After that, the client application is executed. The client uses Naming.lookup() to get the reference of the remote object and invokes methods remotely.
+
+In conclusion, this assignment successfully demonstrates client-server communication using RMI. It explains the use of remote interfaces, stub, skeleton, rmiregistry, and remote object invocation. RMI is a powerful technology in distributed systems because it provides secure, reliable, and simple communication between applications running on different machines.
